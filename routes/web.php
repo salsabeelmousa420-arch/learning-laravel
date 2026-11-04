@@ -1,27 +1,24 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/about', function () {
-    $name = 'بدران';
-    $departments = [
-        '1' => 'Technical',
-        '2' => 'Financial',
-        '3' => 'Sales'
-    ];
-    return view('about', compact('name', 'departments'));
+// مسار عرض صفحة المهام
+Route::get('/tasks', function () {
+    return view('tasks');
 });
 
-Route::post('/about', function () {
-    $name = request('name');
-    $departments = [
-        '1' => 'Technical',
-        '2' => 'Financial',
-        '3' => 'Sales'
-    ];
-    return view('about', compact('name', 'departments'));
+// مسار استقبال البيانات وحفظها في قاعدة البيانات
+Route::post('/create', function () {
+    $task_name = request('name');
+
+    DB::table('tasks')->insert([
+        'name' => $task_name
+    ]);
+
+    return redirect('/tasks');
 });
