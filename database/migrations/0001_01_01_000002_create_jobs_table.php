@@ -43,8 +43,7 @@ return new class extends Migration
             $table->longText('exception');
             $table->timestamp('failed_at')->useCurrent();
 
-            // تحديد طول محدد للأعمدة داخل الفهرس لتجنب خطأ 1071
-            $table->index(['connection', 'queue', 'failed_at'], 'failed_jobs_conn_queue_index');
+            $table->index(['connection', 'queue', 'failed_at']);
         });
     }
 
