@@ -6,7 +6,6 @@
 </div>
 
 @if (isset($task))
-    <!-- نموذج تعديل مهمة موجودة -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-info">Update Task</h6>
@@ -15,11 +14,11 @@
         <div class="card-body">
             <form action="{{ url('update') }}" method="POST">
                 @csrf
-                <input type="hidden" name="id" value="{{ $task->id }}">
+                <input type="hidden" name="id" value="{{ is_array($task) ? ($task['id'] ?? '') : ($task->id ?? '') }}">
 
                 <div class="form-group">
                     <label for="task-name">Task</label>
-                    <input type="text" name="name" id="task-name" class="form-control" value="{{ $task->name }}" required>
+                    <input type="text" name="name" id="task-name" class="form-control" value="{{ is_array($task) ? ($task['name'] ?? '') : ($task->name ?? '') }}" required>
                 </div>
 
                 <button type="submit" class="btn btn-info">
@@ -30,7 +29,6 @@
         </div>
     </div>
 @else
-    <!-- نموذج إضافة مهمة جديدة -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">New Task</h6>
@@ -53,7 +51,6 @@
     </div>
 @endif
 
-<!-- جدول عرض المهام مع أزرار التعديل والحذف -->
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary">Current Tasks</h6>
@@ -70,19 +67,21 @@
                 </thead>
                 <tbody>
                     @forelse ($tasks as $item)
+                        @php
+                            $taskId = is_array($item) ? ($item['id'] ?? $loop->iteration) : ($item->id ?? $loop->iteration);
+                            $taskName = is_array($item) ? ($item['name'] ?? '') : ($item->name ?? '');
+                        @endphp
                         <tr>
-                            <td class="align-middle">{{ $item->name }}</td>
+                            <td class="align-middle">{{ $taskName }}</td>
                             <td class="align-middle" style="display: flex; gap: 8px;">
-                                <!-- زر التعديل -->
-                                <form action="/edit/{{ $item->id }}" method="POST">
+                                <form action="/edit/{{ $taskId }}" method="POST">
                                     @csrf
                                     <button type="submit" class="btn btn-sm btn-info">
                                         <i class="fas fa-edit"></i> Edit
                                     </button>
                                 </form>
 
-                                <!-- زر الحذف -->
-                                <form action="/delete/{{ $item->id }}" method="POST">
+                                <form action="/delete/{{ $taskId }}" method="POST">
                                     @csrf
                                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('هل أنت متأكد من الحذف؟')">
                                         <i class="fas fa-trash"></i> Delete
