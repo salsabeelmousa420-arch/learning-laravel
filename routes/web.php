@@ -1,50 +1,28 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-// 1. عرض الصفحة مع جميع المهام (الجزء الثالث)
-Route::get('/tasks', function () {
-    $tasks = DB::table('tasks')->get();
-    return view('tasks', compact('tasks'));
-});
+// ----------------------------------------------------
+// مسارات إدارة المهام (Tasks)
+// ----------------------------------------------------
+Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
+Route::post('/create', [TaskController::class, 'store'])->name('tasks.store');
+Route::post('/delete/{id}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+Route::post('/edit/{id}', [TaskController::class, 'edit'])->name('tasks.edit');
+Route::post('/update', [TaskController::class, 'update'])->name('tasks.update');
 
-// 2. إضافة مهمة جديدة
-Route::post('/create', function () {
-    $task_name = request('name');
-
-    DB::table('tasks')->insert([
-        'name' => $task_name
-    ]);
-
-    return redirect('/tasks');
-});
-
-// 3. حذف مهمة محددة (الجزء الرابع)
-Route::post('/delete/{id}', function ($id) {
-    DB::table('tasks')->where('id', $id)->delete();
-    return redirect('/tasks');
-});
-
-// 4. جلب بيانات المهمة لوضعها في فورم التعديل (الجزء الخامس)
-Route::post('/edit/{id}', function ($id) {
-    $task = DB::table('tasks')->where('id', $id)->first();
-    $tasks = DB::table('tasks')->get();
-    return view('tasks', compact('task', 'tasks'));
-});
-
-// 5. حفظ التعديلات في قاعدة البيانات (الجزء الخامس)
-Route::post('/update', function () {
-    $id = request('id');
-    $name = request('name');
-
-    DB::table('tasks')->where('id', $id)->update([
-        'name' => $name
-    ]);
-
-    return redirect('/tasks');
-});
+// ----------------------------------------------------
+// مسارات إدارة المستخدمين (Users)
+// ----------------------------------------------------
+Route::get('/users', [UserController::class, 'index'])->name('users.index');
+Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+Route::post('/users', [UserController::class, 'store'])->name('users.store');
+Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
+Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
+Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
